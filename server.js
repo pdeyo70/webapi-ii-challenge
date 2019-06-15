@@ -1,14 +1,8 @@
 const express = require('express');
-let router = express.Router();
-
-const postsRouter = require('./data/seeds/01-posts.js');
-const commentsRouter = require('./data/seeds/02-comments.js');
 
 const server = express();
 
 server.use(express.json());
-server.use('/api/posts', postsRouter);
-server.use('/api/comments', commentsRouter);
 
 server.get('/', (req, res) => {
     res.send(`
@@ -17,5 +11,18 @@ server.get('/', (req, res) => {
  `);
 });
 
+server.get('/api/posts', async (req, res) => {
+    try {
+        const posts = await postsRouter.find(req.query);
+        res.status(200).json(posts);
+    } catch (error) {
+        // log error to database
+        console.log(error);
+        res.status(500).json({
+            message: 'Error retrieving the posts',
+        });
+    }
+});
 
-module.exports = router;
+
+module.exports = server;
