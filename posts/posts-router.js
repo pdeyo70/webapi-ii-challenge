@@ -47,4 +47,20 @@ router.get('/:id/comments', async (req, res) => {
     }
 })
 
+router.post('/', async (req, res) => {
+    try {
+        const post = await Posts.insert(req.body);
+        const postInfo = req.body;
+        console.log(postInfo);
+        if ((postInfo.title == '' || postInfo.title == null) || (postInfo.contents == '' || postInfo.contents == null)) {
+            res.status(400).json({ errorMessage: "Please provide title and contents for the post." })
+        } else {
+            res.status(201).json(postInfo.title + '--' + postInfo.contents)
+        }
+    }
+    catch {
+        res.status(500).json({ error: "There was an error while saving the post to the database" })
+    }
+})
+
 module.exports = router;
