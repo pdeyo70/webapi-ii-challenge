@@ -1,5 +1,7 @@
 const express = require('express');
 
+const db = require('./data/db.js')
+
 const server = express();
 
 server.use(express.json());
@@ -13,7 +15,7 @@ server.get('/', (req, res) => {
 
 server.get('/api/posts', async (req, res) => {
     try {
-        const posts = await postsRouter.find(req.query);
+        const posts = await db.find(req.query);
         res.status(200).json(posts);
     } catch (error) {
         // log error to database
