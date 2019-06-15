@@ -1,6 +1,7 @@
 const express = require('express');
 
 const Posts = require('../data/db.js');
+const Comments = require('../data/db.js');
 
 const router = express.Router();
 
@@ -56,10 +57,28 @@ router.post('/', async (req, res) => {
             res.status(400).json({ errorMessage: "Please provide title and contents for the post." })
         } else {
             res.status(201).json(postInfo.title + '--' + postInfo.contents)
-        }
+        } 
     }
     catch {
         res.status(500).json({ error: "There was an error while saving the post to the database" })
+    }
+})
+
+router.post('/:id/comments', async (req, res) => {
+    console.log(req.body)
+    try {
+        const comment = await Comments('comments').insertComment(req.body);
+        console.log(comment);
+        if (!req.params.id) {
+            res.status(404).json({ message: "The post with the specified ID does not exist." })
+        } else if (comment == '' || comment == null) {
+            res.status(400).json({ errorMessage: "Please provide text for the comment." })
+        } else {
+            res.status(201).json(comment.text)
+        }
+    }
+    catch {
+        res.status(500).json({ error: "There was an error while saving the comment to the database" })
     }
 })
 
